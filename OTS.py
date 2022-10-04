@@ -1,31 +1,51 @@
 import sqlite3
 from tkinter import *
 import csv
+from CreateQueries import *
+from InsertQueries import *
 
 
-root =Tk()
+root = Tk()
 con = sqlite3.connect("OTS.db")
 cur=con.cursor()
-createCityTable = '''CREATE TABLE CITY (
-    City_id INT PRIMARY KEY,
-    City_name varchar(100)
-);
-'''
+# cur.execute(createBookTicketTable)
+cur.execute(createCinemaTable)
 # cur.execute(createCityTable)
-file = open('OTSCSE3330\City.csv')
-contents = csv.reader(file)
+# cur.execute(createScreeningTable)
+# cur.execute(createBookTicketTable)
 
-insert_records = "INSERT INTO CITY(City_id, City_name) VALUES(?,?)"
-# cur.executemany(insert_records,contents)
+BookTicketFile  = open('CSVDATA\BookTicket.csv')
+CinemaFile      = open('CSVDATA\Cinema.csv')
+CityFile        = open('CSVDATA\City.csv')
+MoviesFile      = open('CSVDATA\Movies.csv')
+ScreeningFile   = open('CSVDATA\Screening.csv')
 
-cur.execute(insert_records)
-select_all = "SELECT * FROM CITY"
+bookTicketContents = csv.reader(BookTicketFile)
+cinemaContents     = csv.reader(CinemaFile) 
+cityContents       = csv.reader(CityFile)
+moviesContents     = csv.reader(MoviesFile)
+screeningContents  = csv.reader(ScreeningFile)
 
+# cur.executemany(insert_BookTicket_records, bookTicketContents)
+cur.executemany(insert_Cinema_records,cinemaContents)
+# cur.executemany(insert_city_records,cityContents) Uncomment to insert values from city db
+# cur.executemany(insert_Movies_records,moviesContents)
+# cur.executemany(insert_Screening_records,screeningContents)
+
+#RUN INSERT COMANDS FOR ONLY FIRST TIME SETUP
+select_all_cities = "SELECT * FROM CITY"
+select_all_BookTickets = "SELECT * FROM BOOKTICKET"
 #DEBUG TO CMDLINE 23-25
 def debugCitiesTable():
-    rows = cur.execute(select_all).fetchall()
+    rows = cur.execute(select_all_cities).fetchall()
     for r in rows: #PRINT OUT CI
         print(r)
+def debugBOOKTICKETTables():
+    rows = cur.execute(select_all_BookTickets).fetchAll()
+    for r in rows:
+        print(r)
+# debugCitiesTable()
+debugBOOKTICKETTables()
 
 con.commit()
 con.close() 
